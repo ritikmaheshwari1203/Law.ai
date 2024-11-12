@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Law.ai</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='index-ddd4a618.css')}}" />
+</head>
+
+<body class="overflow-hidden bg-[#343541]">
+    <header>
+        <nav class="w-full fixed top-0 flex justify-between p-5 items-center bg-[#343541]">
+            <span>
+                <h1 class="text-4xl text-white font-serif font-bold  hover:text-blue-500 duration-300 cursor-pointer">
+                    Law.ai</h1>
+            </span>
+
+
+        </nav>
+    </header>
+
+    <section class="w-[100vw] h-[100vh]  ">
+        <div class="w-[100%] mx-auto bg-black overflow-y-auto  h-[35rem] mt-[6rem]  space-y-3 pt-3 my-auto pb-2 "
+            id="chatBox">
+            
+        </div>
+    </section>
+    <footer class="w-full fixed bottom-0 min-h-[6rem] flex justify-center items-center">
+        <!-- <div class="w-[80%] h-[80%] bg-black"> -->
+        <textarea name="prompt" id="prompt" cols="150"
+            class="border-2 pl-[1rem] rounded-md bg-[#343541] text-white pt-1 text-xl border-white h-[3rem]"></textarea>
+        <button id="submit" class="ml-2"><img src="{{url_for('static',filename='send.svg')}}" alt="" srcset=""
+                class="w-[3rem] rotate-[-30deg]"></button>
+    </footer>
+
+    <!-- <script  src="{{url_for('static',filename='script.js')}}"></script> -->
+
+</body>
+<script>
+
+    function typeText(text,value) {
+            let index = 0
+            let element = document.getElementById(value)
+            // element.innerHTML = text
+            let interval = setInterval(() => {
+                if (index < text.length) {
+    
+                    element.innerHTML += text.charAt(index)
+                    index++
+    
+                } else {
+                    clearInterval(interval)
+                }
+            }, 20)
+            console.log(element);
+        }
+    
+
+    function loader(element) {
+        // element.textContent = ''
+        let address=document.getElementById(element)
+            loadInterval = setInterval(() => {
+                // Update the text content of the loading indicator
+                address.textContent += '.';
+    
+                // If the loading indicator has reached three dots, reset it
+                if (element.textContent === '....') {
+                    element.textContent = '';
+                }
+            }, 300);
+        }
+    
+    
+    function randermodelhtml(random){                                
+            let chatBox = document.getElementById("chatBox").innerHTML
+            console.log(chatBox);
+            userhtml = `<div class="w-[80%] min-h-[4rem] overflow-hidden rounded-md bg-white mx-auto flex">
+                    <div class="w-[5%]  object-cover pt-2">
+                        <img src="{{url_for('static',filename='WhatsApp Image 2023-03-03 at 3.02.04 PM-ddd54cfc.jpeg')}}" class="w-[3.3rem]"
+                            alt="" srcset="">
+                    </div>
+                    <div class="w-[90%]" id=${random}>
+                    </div>
+                </div>`;
+            // console.log(userhtml);
+            chatBox = chatBox + userhtml
+            document.getElementById("chatBox").innerHTML = chatBox
+        }
+        
+        
+    function randeruserhtml(text) {
+            let chatBox = document.getElementById("chatBox").innerHTML
+            console.log(chatBox);
+            userhtml = `<div class="w-[80%] overflow-hidden min-h-[4rem] rounded-md bg-white mx-auto flex">
+                            <div class="w-[5%] ">
+                                <img src="{{url_for('static',filename='585e4bcdcb11b227491c3396-88e69c5c.png')}}" class="w-[4rem]" alt="" srcset="">
+                            </div>
+                            <div class="w-[90%]">
+                                ${text}
+                            </div>
+                        </div>`;
+            // console.log(userhtml);
+            chatBox = chatBox + userhtml
+            document.getElementById("chatBox").innerHTML = chatBox
+        }
+    
+    function handleSubmit() {
+    
+    let prompt=document.getElementById("prompt")
+    
+    randeruserhtml(prompt.value);
+    let random=Math.floor(Math.random()*10000);
+    
+    randermodelhtml(random);
+    
+    // loader(random)
+    
+    let data = {
+        'prompt': prompt.value
+    }
+    prompt.value='';
+    data = JSON.stringify(data);
+    let params = {
+        method: 'post',
+        credentials: "include",
+        headers: {
+    
+            'Content-Type': 'application/json'
+        },
+        cache: "no-cache",
+    
+        body: data
+    }
+    
+    fetch('/model', params).then(function (respone) {
+        return respone.json()
+    }).then(function (data) {
+        let respone = document.getElementById("chat_container")
+        console.log(data);
+        console.log(data.answers);
+        respone = data.answers
+        // clearInterval(loadInterval)
+        
+        let rander=document.getElementById(random)
+        rander.innerHTML = " "
+    
+    
+        // const data = await response.json();
+        const parsedData = respone // trims any trailing spaces/'\n' 
+        console.log(parsedData);
+        typeText(parsedData,random)
+    })
+    
+    }
+    
+    document.getElementById("submit").addEventListener("click", handleSubmit)
+    
+        
+        
+    
+    
+    </script>
+</html>
+
+
+
